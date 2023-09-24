@@ -1,4 +1,7 @@
 ---
+env:
+  CIRRUS_CLONE_DEPTH: 1
+
 task:
   persistent_worker:
     labels:
