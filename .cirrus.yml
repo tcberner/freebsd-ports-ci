@@ -6,6 +6,15 @@ task:
   persistent_worker:
     labels:
       distro: freebsd
+  clone_script: |
+    if [ -z "$CIRRUS_PR" ]; then
+      git clone --recursive --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    else
+      git clone --recursive https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+      git reset --hard $CIRRUS_CHANGE_IN_REPO
+    fi
   debug_script:
     - echo "running on-premise"
     - echo $CIRRUS_BASE_BRANCH
@@ -16,3 +25,8 @@ task:
     - echo $CIRRUS_PR_TITLE
     - echo $CIRRUS_PR_BODY
     - echo ${CIRRUS_PR_TITLE%%:*}
+    - echo ${CIRRUS_WORKING_DIR}/${CIRRUS_REPO_NAME}
+  test_script:
+    - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR}/${CIRRUS_REPO_NAME} -p cirrus
+    - poudriere testport -j 124amd64 -p cirrus databases/freetds
+    - poudriere ports -d -k -p cirrus
