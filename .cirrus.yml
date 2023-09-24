@@ -32,6 +32,23 @@ task:
     - poudriere testport -j 124amd64 -p cirrus databases/freetds
     - poudriere ports -d -k -p cirrus
 
+debug_task:
+  only_if: $CIRRUS_BRANCH !=~ 'pull/.*'
+  persistent_worker:
+    labels:
+      distro: freebsd
+  debug_script:
+    - echo $CIRRUS_BASE_BRANCH
+    - echo $CIRRUS_BRANCH
+    - echo $CIRRUS_CHANGE_TITLE
+    - echo $CIRRUS_DEFAULT_BRANCH
+    - echo $CIRRUS_PR
+    - echo $CIRRUS_PR_TITLE
+    - echo $CIRRUS_PR_BODY
+    - echo ${CIRRUS_PR_TITLE%%:*}
+    - echo ${CIRRUS_WORKING_DIR}
+    - echo ${USER}
+
 pr_task:
   only_if: $CIRRUS_BRANCH =~ 'pull/.*'
   persistent_worker:
