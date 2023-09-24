@@ -29,6 +29,6 @@ task:
     - echo ${CIRRUS_PR_TITLE%%:*}
     - echo ${CIRRUS_WORKING_DIR}/${CIRRUS_REPO_NAME}
   test_script:
-    - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR}/${CIRRUS_REPO_NAME} -p cirrus
+    - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p cirrus
     - poudriere testport -j 124amd64 -p cirrus databases/freetds
     - poudriere ports -d -k -p cirrus
