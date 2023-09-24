@@ -3,7 +3,7 @@ env:
   CIRRUS_CLONE_DEPTH: 1
 
 task:
-  only_if: $CIRRUS_BRANCH =~ 'pull/.*'
+  only_if: $CIRRUS_PR == 1
   persistent_worker:
     labels:
       distro: freebsd
