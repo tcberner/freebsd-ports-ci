@@ -3,6 +3,7 @@ env:
   CIRRUS_CLONE_DEPTH: 1
 
 task:
+  only_if: $CIRRUS_BRANCH !=~ 'pull/.*'
   persistent_worker:
     labels:
       distro: freebsd
@@ -31,7 +32,7 @@ task:
     - poudriere testport -j 124amd64 -p cirrus databases/freetds
     - poudriere ports -d -k -p cirrus
 
-pr_test:
+pr_task:
   only_if: $CIRRUS_BRANCH =~ 'pull/.*'
   persistent_worker:
     labels:
