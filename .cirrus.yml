@@ -1,0 +1,6 @@
+---
+task:
+  persistent_worker:
+    labels:
+      distro: freebsd
+  script: echo "running on-premise"
