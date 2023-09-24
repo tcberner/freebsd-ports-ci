@@ -10,15 +10,12 @@ task:
     if [ -z "$CIRRUS_PR" ]; then
       git clone --depth 1 --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
-      find /tmp/cirrus-build -type d -d 3
     else
       git clone --depth 1 https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
-      find /tmp/cirrus-build -type d -d 3
     fi
   debug_script:
-    - echo "running on-premise"
     - echo $CIRRUS_BASE_BRANCH
     - echo $CIRRUS_BRANCH
     - echo $CIRRUS_CHANGE_TITLE
@@ -27,7 +24,8 @@ task:
     - echo $CIRRUS_PR_TITLE
     - echo $CIRRUS_PR_BODY
     - echo ${CIRRUS_PR_TITLE%%:*}
-    - echo ${CIRRUS_WORKING_DIR}/${CIRRUS_REPO_NAME}
+    - echo ${CIRRUS_WORKING_DIR}
+    - echo ${USER}
   test_script:
     - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p cirrus
     - poudriere testport -j 124amd64 -p cirrus databases/freetds
