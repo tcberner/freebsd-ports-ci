@@ -38,6 +38,6 @@ pr_test:
       distro: freebsd
   pr_script:
     - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p ${CIRRUS_PR}
-    - [ -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile ] && poudriere testport -j 124amd64 -p ${CIRRUS_PR} ${CIRRUS_PR_TITLE%%:*}
+    - test -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile && poudriere testport -j 124amd64 -p ${CIRRUS_PR} ${CIRRUS_PR_TITLE%%:*}
     - poudriere pkgclean -j 124amd64 -p ${CIRRUS_PR} -A -y
     - poudriere ports -d -k -p ${CIRRUS_PR}
