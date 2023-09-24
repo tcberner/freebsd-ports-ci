@@ -3,43 +3,19 @@ env:
   CIRRUS_CLONE_DEPTH: 1
 
 task:
-  only_if: $CIRRUS_BRANCH !=~ 'pull/.*'
-  persistent_worker:
-    labels:
-      distro: freebsd
-  clone_script: |
-    if [ -z "$CIRRUS_PR" ]; then
-      git clone --depth 1 --branch=$CIRRUS_BRANCH https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-    else
-      git clone --depth 1 https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
-      git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
-      git reset --hard $CIRRUS_CHANGE_IN_REPO
-      if [ ! -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile ]; then
-        echo "Add proper PR TITLE like <CATEGORY>/<PORTNAME>: YOUR CHANGES"
-        exit 1
-      fi
-    fi
-  debug_script:
-    - echo $CIRRUS_BASE_BRANCH
-    - echo $CIRRUS_BRANCH
-    - echo $CIRRUS_CHANGE_TITLE
-    - echo $CIRRUS_DEFAULT_BRANCH
-    - echo $CIRRUS_PR
-    - echo $CIRRUS_PR_TITLE
-    - echo $CIRRUS_PR_BODY
-    - echo ${CIRRUS_PR_TITLE%%:*}
-  test_script:
-    - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p cirrus
-    - poudriere testport -j 124amd64 -p cirrus databases/freetds
-    - poudriere ports -d -k -p cirrus
-
-pr_task:
   only_if: $CIRRUS_BRANCH =~ 'pull/.*'
   persistent_worker:
     labels:
       distro: freebsd
-  pr_script:
+  clone_script: |
+    git clone --depth 1 https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
+    git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
+    git reset --hard $CIRRUS_CHANGE_IN_REPO
+    if [ ! -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile ]; then
+      echo "Add proper PR TITLE like <CATEGORY>/<PORTNAME>: YOUR CHANGES"
+      exit 1
+    fi
+  test_script:
     - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p ${CIRRUS_PR}
     - poudriere testport -j 124amd64 -p ${CIRRUS_PR} ${CIRRUS_PR_TITLE%%:*}
     - poudriere pkgclean -j 124amd64 -p ${CIRRUS_PR} -A -y
