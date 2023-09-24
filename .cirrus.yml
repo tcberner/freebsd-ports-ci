@@ -12,7 +12,7 @@ task:
       git clone --depth 1 https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git $CIRRUS_WORKING_DIR
       git fetch origin pull/$CIRRUS_PR/head:pull/$CIRRUS_PR
       git reset --hard $CIRRUS_CHANGE_IN_REPO
-      if [ ! -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile ]; then
+      if [ ! -f "${CIRRUS_WORKING_DIR}"/"${CIRRUS_PR_TITLE%%:*}"/Makefile ]; then
         echo "Add proper PR TITLE like <CATEGORY>/<PORTNAME>: YOUR CHANGES"
         exit 1
       fi
