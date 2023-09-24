@@ -30,3 +30,14 @@ task:
     - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p cirrus
     - poudriere testport -j 124amd64 -p cirrus databases/freetds
     - poudriere ports -d -k -p cirrus
+
+pr_test:
+  only_if: $CIRRUS_BRANCH =~ 'pull/.*'
+  persistent_worker:
+    labels:
+      distro: freebsd
+  pr_script:
+    - poudriere ports -c -m null -M ${CIRRUS_WORKING_DIR} -p ${CIRRUS_PR}
+    - [ -f ${CIRRUS_WORKING_DIR}/${CIRRUS_PR_TITLE%%:*}/Makefile ] && poudriere testport -j 124amd64 -p ${CIRRUS_PR} ${CIRRUS_PR_TITLE%%:*}
+    - poudriere pkgclean -j 124amd64 -p ${CIRRUS_PR} -A -y
+    - poudriere ports -d -k -p ${CIRRUS_PR}
