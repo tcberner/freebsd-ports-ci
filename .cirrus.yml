@@ -6,4 +6,13 @@ task:
   persistent_worker:
     labels:
       distro: freebsd
-  script: echo "running on-premise"
+  debug_script:
+    - echo "running on-premise"
+    - echo $CIRRUS_BASE_BRANCH
+    - echo $CIRRUS_BRANCH
+    - echo $CIRRUS_CHANGE_TITLE
+    - echo $CIRRUS_DEFAULT_BRANCH
+    - echo $CIRRUS_PR
+    - echo $CIRRUS_PR_TITLE
+    - echo $CIRRUS_PR_BODY
+    - echo ${CIRRUS_PR_TITLE%%:*}
